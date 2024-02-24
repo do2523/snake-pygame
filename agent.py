@@ -78,8 +78,8 @@ class Agent:
         
         states, actions, rewards, next_states, dones = zip(*mini_sample)
         self.trainer.train_step(states, actions, rewards, next_states, dones)
-        for state, action, reward, next_state, done in mini_sample:
-            self.trainer.train_step(state, action, reward, next_state, done)
+     #   for state, action, reward, next_state, done in mini_sample:
+       #     self.trainer.train_step(state, action, reward, next_state, done)
 
 
 
@@ -87,7 +87,20 @@ class Agent:
         self.trainer.train_step(state, action, reward, next_state, done)
 
     def get_action(self, state):
-        pass
+        # random.moves: tradeoff exploration / exploitation
+        self.epsilon = 80 - self.n_games
+        final_move = [0,0,0]
+        if random.randint(0,200) < self.epsilon:
+            move = random.randint(0, 2)
+            final_move[move] = 1
+        else:
+            state = torch.tensor(state, dtype= torch.float)
+            prediction = self.model.predict(state0)
+            move = torch.argmax(prediction).item()
+            final_move[move] = 1
+        
+        return final_move
+
 
 def train():
     plot_scores =  []
